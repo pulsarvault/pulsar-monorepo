@@ -7,7 +7,7 @@ fn main() {
  }
  
  vec.push(5);
- println!("{:?}", vec);
+ println!("{vec:?}");
  
  let popped: Option<i32> = vec.pop();
  
@@ -16,6 +16,6 @@ fn main() {
      None => println!("Index out of bounds"),
  }
  
- println!("{:?}", vec);
+ println!("{vec:?}");
  
 }
