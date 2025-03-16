@@ -37,9 +37,9 @@ fn main() {
 
     for thing in &things {
         match thing {
-            Thing::Apple(count) => println!("Apple count: {}", count),
-            Thing::Person(name) => println!("Person: {}", name),
-            Thing::Exists(status) => println!("Exists: {}", status),
+            Thing::Apple(count) => println!("Apple count: {count}"),
+            Thing::Person(name) => println!("Person: {name}"),
+            Thing::Exists(status) => println!("Exists: {status}"),
         }
     }
 }
