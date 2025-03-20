@@ -1,5 +1,24 @@
-use core::f64;
+use std::cmp::Ordering;
 use std::f64::consts::PI;
+
+fn compare<T: Ord + std::fmt::Display>(a: T, b: T) -> Ordering {
+    match a.cmp(&b) {
+        Ordering::Greater => {
+            println!("{a} is greater than {b}");
+            Ordering::Greater
+        }
+
+        Ordering::Less => {
+            println!("{a} is less than {b}");
+            Ordering::Less
+        }
+
+        Ordering::Equal => {
+            println!("{a} and {b} are equal");
+            Ordering::Equal
+        }
+    }
+}
 
 enum Shape {
     Square(f64),
@@ -24,4 +43,7 @@ fn main() {
         let circle = Shape::Circle(9.0);
         println!("Area: {}", calculate_area(circle));
     }
+
+    let result = compare(40, 42);
+    println!("Result {:?}", result);
 }
