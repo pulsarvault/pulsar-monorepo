@@ -18,17 +18,16 @@ impl Blob {
         }
     }
 
+    fn draw(&self) {
+        draw_circle(self.position.x, self.position.y, self.radius, RED);
+    }
+
     fn update(&mut self) {
-        self.position.x += self.speed.x;
-        self.position.y += self.speed.y;
+        self.position += self.speed;
 
         if self.position.x - self.radius <= 0.0 || self.position.x + self.radius >= screen_width() {
             self.speed.x = -self.speed.x;
         }
-    }
-
-    fn draw(&self) {
-        draw_circle(self.position.x, self.position.y, self.radius, RED);
     }
 }
 
@@ -49,80 +48,97 @@ impl Player {
             player_score: 0,
         }
     }
+
+    fn draw(&self) {
+        draw_rectangle(
+            self.position.x,
+            self.position.y,
+            self.player_width,
+            self.player_height,
+            BLUE,
+        );
+    }
+
+    fn update(&mut self) {
+        let screen_w = screen_width();
+        self.position.x = self.position.x.clamp(0.0, screen_w - self.player_width);
+
+        if is_key_down(KeyCode::Left) {
+            self.position.x -= 10.0;
+        }
+        if is_key_down(KeyCode::Right) {
+            self.position.x += 10.0;
+        }
+    }
 }
 
 // The Game Loop
 #[macroquad::main("BEAT THE BLOBS")]
 async fn main() {
+    clear_background(BLACK);
     let mut game_over = false;
     let mut blobs = vec![];
     let mut player = Player::new();
+    let mut last_spawn_time = get_time();
 
     loop {
+        let screen_w = screen_width();
+        let screen_h = screen_height();
+
         if !game_over {
-            if gen_range(0, 51) < 2 {
+            // Limit blob spawning
+            if get_time() - last_spawn_time > 0.5 {
                 blobs.push(Blob::new());
+                last_spawn_time = get_time();
             }
 
-            if is_key_down(KeyCode::Left) {
-                player.position.x -= 10.0;
-            }
-            if is_key_down(KeyCode::Right) {
-                player.position.x += 10.0;
-            }
-
-            player.position.x = player
-                .position
-                .x
-                .clamp(0.0, screen_width() - player.player_width);
-
-            clear_background(BLACK);
-
-            for blob in &mut blobs {
+            // Update and draw blobs
+            blobs.retain_mut(|blob| {
                 blob.update();
                 blob.draw();
 
+                // Collision detection
                 if blob.position.y + blob.radius >= player.position.y
                     && blob.position.x + blob.radius >= player.position.x
                     && blob.position.x - blob.radius <= player.position.x + player.player_width
                 {
                     game_over = true;
                 }
-            }
 
-            blobs.retain(|c| c.position.y - c.radius <= screen_height());
+                // Remove off-screen blobs and increase score
+                if blob.position.y - blob.radius > screen_h {
+                    player.player_score += 1;
+                    false
+                } else {
+                    true
+                }
+            });
 
-            draw_rectangle(
-                player.position.x,
-                player.position.y,
-                player.player_width,
-                player.player_height,
-                BLUE,
-            );
-            player.player_score += 1;
+            player.update();
+            player.draw();
         } else {
             draw_text(
                 "Game Over",
-                screen_width() / 2.0 - 100.0,
-                screen_height() / 2.0,
+                screen_w / 2.0 - 100.0,
+                screen_h / 2.0,
                 50.0,
                 RED,
             );
             draw_text(
                 "Press SPACE to Restart",
-                screen_width() / 2.0 - 150.0,
-                screen_height() / 2.0 + 60.0,
+                screen_w / 2.0 - 150.0,
+                screen_h / 2.0 + 60.0,
                 30.0,
                 WHITE,
             );
             if is_key_pressed(KeyCode::Space) {
                 blobs.clear();
-                player.position.x = screen_width() / 2.0;
-                player.player_score = 0;
+                player = Player::new();
                 game_over = false;
             }
         }
 
+        // Draw UI
         draw_text(
             &format!("Score: {}", player.player_score),
             10.0,
@@ -130,7 +146,7 @@ async fn main() {
             30.0,
             WHITE,
         );
-        draw_text("ROHIT CHAUHAN", screen_width() - 200.0, 30.0, 30.0, WHITE);
+        draw_text("ROHIT CHAUHAN", screen_w - 200.0, 30.0, 30.0, WHITE);
 
         next_frame().await;
     }
