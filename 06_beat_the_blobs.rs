@@ -1,9 +1,6 @@
-// Rohit: Beat the Blobs
 use macroquad::prelude::*;
-// rand 0.9 crate has conflict with macroquad rand module so need extern create to avoid namespacing issue
-extern crate rand as external_rand;
+use macroquad::rand::*;
 
-// The Blob
 struct Circle {
     x: f32,
     y: f32,
@@ -14,13 +11,12 @@ struct Circle {
 
 impl Circle {
     fn new() -> Self {
-        let mut rng = external_rand::rng();
         Self {
-            x: external_rand::Rng::random_range(&mut rng, 0.0..screen_width()),
+            x: gen_range(0.0, screen_width()),
             y: -20.0,
             radius: 20.0,
-            y_speed: external_rand::Rng::random_range(&mut rng, 2.0..5.0),
-            x_speed: external_rand::Rng::random_range(&mut rng, -2.0..2.0),
+            y_speed: gen_range(2.0, 5.0),
+            x_speed: gen_range(-2.0, 2.0),
         }
     }
 
@@ -50,7 +46,7 @@ async fn main() {
 
     loop {
         if !game_over {
-            if external_rand::random::<f32>() < 0.02 {
+            if gen_range(0, 51) < 1 {
                 circles.push(Circle::new());
             }
 
@@ -60,7 +56,7 @@ async fn main() {
             if is_key_down(KeyCode::Right) {
                 player_x += 5.0;
             }
-//clamp to restrict range
+
             player_x = player_x.clamp(0.0, screen_width() - player_width);
 
             clear_background(BLACK);
