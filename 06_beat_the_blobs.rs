@@ -12,7 +12,7 @@ impl Blob {
         Self {
             radius: 20.0,
             position: vec2(gen_range(0.0, screen_width()),-20.0),
-            speed: vec2(gen_range(-2.0, 2.0), gen_range(2.0, 5.0)),
+            speed: vec2(gen_range(-10.0, 10.0), gen_range(10.0, 10.0)),
         }
     }
 
@@ -32,7 +32,7 @@ impl Blob {
 
 #[macroquad::main("BEAT THE BLOBS")]
 async fn main() {
-    let mut circles = vec![];
+    let mut blobs = vec![];
     let mut player_x = screen_width() / 2.0;
     let player_y = screen_height() - 30.0;
     let player_width = 80.0;
@@ -42,8 +42,8 @@ async fn main() {
 
     loop {
         if !game_over {
-            if gen_range(0, 51) < 1 {
-                circles.push(Blob::new());
+            if gen_range(0, 51) < 2 {
+                blobs.push(Blob::new());
             }
 
             if is_key_down(KeyCode::Left) {
@@ -57,19 +57,19 @@ async fn main() {
 
             clear_background(BLACK);
 
-            for circle in &mut circles {
-                circle.update();
-                circle.draw();
+            for blob in &mut blobs {
+                blob.update();
+                blob.draw();
 
-                if circle.position.y + circle.radius >= player_y
-                    && circle.position.x + circle.radius >= player_x
-                    && circle.position.x - circle.radius <= player_x + player_width
+                if blob.position.y + blob.radius >= player_y
+                    && blob.position.x + blob.radius >= player_x
+                    && blob.position.x - blob.radius <= player_x + player_width
                 {
                     game_over = true;
                 }
             }
 
-            circles.retain(|c| c.position.y - c.radius <= screen_height());
+            blobs.retain(|c| c.position.y - c.radius <= screen_height());
 
             draw_rectangle(player_x, player_y, player_width, player_height, BLUE);
             score += 1;
@@ -77,7 +77,7 @@ async fn main() {
             draw_text("Game Over", screen_width() / 2.0 - 100.0, screen_height() / 2.0, 50.0, RED);
             draw_text("Press SPACE to Restart", screen_width() / 2.0 - 150.0, screen_height() / 2.0 + 60.0, 30.0, WHITE);
             if is_key_pressed(KeyCode::Space) {
-                circles.clear();
+                blobs.clear();
                 player_x = screen_width() / 2.0;
                 score = 0;
                 game_over = false;
