@@ -1,36 +1,32 @@
 use macroquad::prelude::*;
 use macroquad::rand::*;
 
-struct Circle {
-    x: f32,
-    y: f32,
+struct Blob {
     radius: f32,
-    y_speed: f32,
-    x_speed: f32,
+    position: Vec2,
+    speed: Vec2,
 }
 
-impl Circle {
+impl Blob {
     fn new() -> Self {
         Self {
-            x: gen_range(0.0, screen_width()),
-            y: -20.0,
             radius: 20.0,
-            y_speed: gen_range(2.0, 5.0),
-            x_speed: gen_range(-2.0, 2.0),
+            position: vec2(gen_range(0.0, screen_width()),-20.0),
+            speed: vec2(gen_range(-2.0, 2.0), gen_range(2.0, 5.0)),
         }
     }
 
     fn update(&mut self) {
-        self.y += self.y_speed;
-        self.x += self.x_speed;
+        self.position.x += self.speed.x;
+        self.position.y += self.speed.y;
 
-        if self.x - self.radius <= 0.0 || self.x + self.radius >= screen_width() {
-            self.x_speed = -self.x_speed;
+        if self.position.x - self.radius <= 0.0 || self.position.x + self.radius >= screen_width() {
+            self.speed.x = -self.speed.x;
         }
     }
 
     fn draw(&self) {
-        draw_circle(self.x, self.y, self.radius, RED);
+        draw_circle(self.position.x, self.position.y, self.radius, RED);
     }
 }
 
@@ -47,7 +43,7 @@ async fn main() {
     loop {
         if !game_over {
             if gen_range(0, 51) < 1 {
-                circles.push(Circle::new());
+                circles.push(Blob::new());
             }
 
             if is_key_down(KeyCode::Left) {
@@ -65,15 +61,15 @@ async fn main() {
                 circle.update();
                 circle.draw();
 
-                if circle.y + circle.radius >= player_y
-                    && circle.x + circle.radius >= player_x
-                    && circle.x - circle.radius <= player_x + player_width
+                if circle.position.y + circle.radius >= player_y
+                    && circle.position.x + circle.radius >= player_x
+                    && circle.position.x - circle.radius <= player_x + player_width
                 {
                     game_over = true;
                 }
             }
 
-            circles.retain(|c| c.y - c.radius <= screen_height());
+            circles.retain(|c| c.position.y - c.radius <= screen_height());
 
             draw_rectangle(player_x, player_y, player_width, player_height, BLUE);
             score += 1;
