@@ -14,7 +14,7 @@ impl Blob {
         Self {
             radius: 20.0,
             position: vec2(gen_range(0.0, screen_width()), -20.0),
-            speed: vec2(gen_range(-10.0, 10.0), gen_range(10.0, 10.0)),
+            speed: vec2(gen_range(-15.0, 15.0), gen_range(15.0, 25.0)),
         }
     }
 
@@ -28,6 +28,15 @@ impl Blob {
         if self.position.x - self.radius <= 0.0 || self.position.x + self.radius >= screen_width() {
             self.speed.x = -self.speed.x;
         }
+    }
+
+    // Using Co-ordinate Geometry Distance Formula/Pythagorean Theorem
+    // Distance between Circle centre and closest point on Rectangle
+    fn collides_with(&self, player: &Player) -> bool {
+        let closest_x = self.position.x.clamp(player.position.x, player.position.x + player.player_width);
+        let closest_y = self.position.y.clamp(player.position.y, player.position.y + player.player_height);
+        let distance = Vec2::new(self.position.x - closest_x, self.position.y - closest_y);
+        distance.length() < self.radius
     }
 }
 
@@ -87,7 +96,7 @@ async fn main() {
 
         if !game_over {
             // Limit blob spawning
-            if get_time() - last_spawn_time > 0.5 {
+            if get_time() - last_spawn_time > 0.2 {
                 blobs.push(Blob::new());
                 last_spawn_time = get_time();
             }
@@ -98,10 +107,7 @@ async fn main() {
                 blob.draw();
 
                 // Collision detection
-                if blob.position.y + blob.radius >= player.position.y
-                    && blob.position.x + blob.radius >= player.position.x
-                    && blob.position.x - blob.radius <= player.position.x + player.player_width
-                {
+                if blob.collides_with(&player) {
                     game_over = true;
                 }
 
