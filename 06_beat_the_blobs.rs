@@ -1,8 +1,8 @@
-// Rohit: Beat the Blobs for Samar/Samir in Rust
+// Rohit: Beat the Blobs for Samar/Samir in Rust.
 use macroquad::prelude::*;
 use macroquad::rand::*;
 
-// Defining Enemy Blob
+// Defining the Enemy Blob.
 struct Blob {
     radius: f32,
     position: Vec2,
@@ -24,14 +24,16 @@ impl Blob {
 
     fn update(&mut self) {
         self.position += self.speed;
-
+        // Collision detection with basic physics. You invert the x sign on velocity vector when hitting a wall.
         if self.position.x - self.radius <= 0.0 || self.position.x + self.radius >= screen_width() {
             self.speed.x = -self.speed.x;
         }
     }
 
-    // Using Co-ordinate Geometry Distance Formula/Pythagorean Theorem
-    // Distance between Circle centre and closest point on Rectangle
+    // Collision detection using Co-ordinate Geometry Distance Formula/Pythagorean Theorem.
+    // Distance between Circle centre and closest point on Rectangle. Here the length() fn does it automatically over distance Vec2.
+    // You can write it yourself also. clamp() checks circle-centre every frame with rectangle length. circle centre is clamped to min/max of rectangle.
+    // According to Game engine principles, collision detection is checked for in every frame only on relatively faster moving objects.
     fn collides_with(&self, player: &Player) -> bool {
         let closest_x = self.position.x.clamp(player.position.x, player.position.x + player.player_width);
         let closest_y = self.position.y.clamp(player.position.y, player.position.y + player.player_height);
@@ -40,7 +42,7 @@ impl Blob {
     }
 }
 
-// Defining Player
+// Defining the Player
 struct Player {
     position: Vec2,
     player_width: f32,
@@ -95,18 +97,19 @@ async fn main() {
         let screen_h = screen_height();
 
         if !game_over {
-            // Limit blob spawning
+            // Limit blob spawning. 0.1 will make them appear insanely fast.
             if get_time() - last_spawn_time > 0.2 {
                 blobs.push(Blob::new());
                 last_spawn_time = get_time();
             }
 
             // Update and draw blobs
+            // Game engine principles tell you update() is always first and draw() is second.
             blobs.retain_mut(|blob| {
                 blob.update();
                 blob.draw();
 
-                // Collision detection
+                // Collision detection applied. Blobs are faster moving than the relatively slower player.
                 if blob.collides_with(&player) {
                     game_over = true;
                 }
