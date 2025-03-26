@@ -104,7 +104,8 @@ impl Game {
         self.board = new_board;
     }
 
-    // Reverse function to flip rows horizontally
+    // Reverse function to flip rows horizontally in case of up or down.
+    // Do reverse again after SMS
     fn reverse(&mut self) {
         let mut new_board = [[Tile::Empty; 4]; 4];
         for i in 0..4 {
@@ -115,40 +116,40 @@ impl Game {
         self.board = new_board;
     }
 
-    fn move_board(&mut self, direction: KeyCode) -> bool {
-        let mut moved = false;
-        
-        match direction {
-            KeyCode::Left => {
-                moved = self.slide_left();
-            }
-            KeyCode::Right => {
-                self.reverse();         // Flip horizontally
-                moved = self.slide_left();
-                self.reverse();         // Flip back
-            }
-            KeyCode::Up => {
-                self.transpose();      // Swap rows and columns
-                moved = self.slide_left();
-                self.transpose();      // Swap back
-            }
-            KeyCode::Down => {
-                self.transpose();      // Swap rows and columns
-                self.reverse();        // Flip horizontally
-                moved = self.slide_left();
-                self.reverse();        // Flip back
-                self.transpose();      // Swap back
-            }
-            _ => return false,
+fn move_board(&mut self, direction: KeyCode) -> bool {
+    let moved = match direction {
+        KeyCode::Left => {
+            self.slide_left()
         }
+        KeyCode::Right => {
+            self.reverse();         // Flip horizontally
+            let moved = self.slide_left();
+            self.reverse();         // Flip back
+            moved
+        }
+        KeyCode::Up => {
+            self.transpose();      // Swap rows and columns
+            let moved = self.slide_left();
+            self.transpose();      // Swap back
+            moved
+        }
+        KeyCode::Down => {
+            self.transpose();      // Swap rows and columns
+            self.reverse();        // Flip horizontally
+            let moved = self.slide_left();
+            self.reverse();        // Flip back
+            self.transpose();      // Swap back
+            moved
+        }
+        _ => return false,
+    };
 
-        if moved {
-            self.add_random_tile();
-            self.check_game_over();
-        }
-        moved
+    if moved {
+        self.add_random_tile();
+        self.check_game_over();
     }
-
+    moved
+}
     fn check_game_over(&mut self) {
         if self.board.iter().flatten().any(|&tile| tile == Tile::Empty) {
             return;
@@ -191,11 +192,11 @@ async fn main() {
                 if let Tile::Value(val) = game.board[i][j] {
                     let color = match val {
                         2 => LIGHTGRAY,
-                        4 => YELLOW,
+                        4 => BEIGE,
                         8 => ORANGE,
-                        16 => RED,
-                        32 => PINK,
-                        64 => PURPLE,
+                        16 => PINK,
+                        32 => PURPLE,
+                        64 => RED,
                         128 => BLUE,
                         256 => GREEN,
                         512 => GOLD,
