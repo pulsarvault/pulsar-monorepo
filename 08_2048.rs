@@ -1,11 +1,13 @@
 use macroquad::prelude::*;
 
+// Tile enumeration
 #[derive(Clone, Copy, PartialEq)]
 enum Tile {
     Empty,
     Value(u32),
 }
 
+// Game Structure
 #[derive(Clone)]
 struct Game {
     board: [[Tile; 4]; 4],
@@ -25,6 +27,7 @@ impl Game {
         game
     }
 
+// First find empty tiles
     fn add_random_tile(&mut self) {
         let mut empty: Vec<(usize, usize)> = Vec::new();
         for i in 0..4 {
@@ -34,7 +37,7 @@ impl Game {
                 }
             }
         }
-        
+// Generate 2 with 90% possibilty in empty tuples
         if !empty.is_empty() {
             let (i, j) = empty[rand::gen_range(0, empty.len())];
             self.board[i][j] = if rand::gen_range(0.0, 1.0) < 0.9 {
@@ -45,6 +48,7 @@ impl Game {
         }
     }
 
+// You need to use Slide, Merge, and then again Slide (SMS)
     fn slide_left(&mut self) -> bool {
         let mut moved = false;
         for i in 0..4 {
@@ -89,36 +93,53 @@ impl Game {
         moved
     }
 
-    fn rotate(&mut self) {
+    // Matrix transpose function. Easy in school but mind-bender in Rust
+    fn transpose(&mut self) {
         let mut new_board = [[Tile::Empty; 4]; 4];
         for i in 0..4 {
             for j in 0..4 {
-                new_board[j][3 - i] = self.board[i][j];
+                new_board[i][j] = self.board[j][i];
+            }
+        }
+        self.board = new_board;
+    }
+
+    // Reverse function to flip rows horizontally
+    fn reverse(&mut self) {
+        let mut new_board = [[Tile::Empty; 4]; 4];
+        for i in 0..4 {
+            for j in 0..4 {
+                new_board[i][j] = self.board[i][3 - j];
             }
         }
         self.board = new_board;
     }
 
     fn move_board(&mut self, direction: KeyCode) -> bool {
-        // Adjusted rotation counts to fix up/down movement
-        let rotations = match direction {
-            KeyCode::Left => 0,    // No rotation needed
-            KeyCode::Up => 3,     // Rotate 3 times (270° clockwise = 90° counterclockwise)
-            KeyCode::Right => 2,  // Rotate twice (180°)
-            KeyCode::Down => 1,   // Rotate once (90° clockwise)
+        let mut moved = false;
+        
+        match direction {
+            KeyCode::Left => {
+                moved = self.slide_left();
+            }
+            KeyCode::Right => {
+                self.reverse();         // Flip horizontally
+                moved = self.slide_left();
+                self.reverse();         // Flip back
+            }
+            KeyCode::Up => {
+                self.transpose();      // Swap rows and columns
+                moved = self.slide_left();
+                self.transpose();      // Swap back
+            }
+            KeyCode::Down => {
+                self.transpose();      // Swap rows and columns
+                self.reverse();        // Flip horizontally
+                moved = self.slide_left();
+                self.reverse();        // Flip back
+                self.transpose();      // Swap back
+            }
             _ => return false,
-        };
-
-        // Rotate to align with left slide
-        for _ in 0..rotations {
-            self.rotate();
-        }
-        
-        let moved = self.slide_left();
-        
-        // Rotate back to original orientation
-        for _ in 0..(4 - rotations % 4) {
-            self.rotate();
         }
 
         if moved {
