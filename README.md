@@ -1,1 +1,1 @@
-Rohit: Fun Rust programs written by me to teach software engineering to kids. 
+Rohit: Fun Python programs written by me to teach software engineering to kids. 
