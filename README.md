@@ -1,1 +1,1 @@
-Rohit: Fun Python programs written by me to teach software engineering to kids. 
+Rohit Chauhan: How to create machine learning models, blockchain architecture, and optimized ganes.
