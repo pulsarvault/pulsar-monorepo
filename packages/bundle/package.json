@@ -1,0 +1,13 @@
+{
+  "name": "@pulsar/bundle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pulsar Global .js file for Browser",
+  "dependencies": {
+    "@pulsar/eventbus": "workspace:*",
+    "@pulsar/storemanager": "workspace:*"
+  },
+  "author": "Rohit Chauhan",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0"
+}
