@@ -1,11 +1,18 @@
 {
-  "name": "@pulsar/bundle",
+  "name": "@vault/bundle",
   "version": "1.0.0",
   "private": true,
-  "description": "Pulsar Global .js file for Browser",
+  "type": "module",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown --config tsdown.config.ts",
+    "dev": "tsdown --watch --config tsdown.config.ts",
+    "clean": "rimraf dist"
+  },
+  "description": "Vault Global .js file for Browser",
   "dependencies": {
-    "@pulsar/eventbus": "workspace:*",
-    "@pulsar/storemanager": "workspace:*"
+    "@vault/eventbus": "workspace:*",
+    "@vault/statemanager": "workspace:*"
   },
   "author": "Rohit Chauhan",
   "license": "ISC",

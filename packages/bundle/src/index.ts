@@ -1,2 +1,2 @@
-export * as eventbus from "@pulsar/eventbus";
-export * as storemanager from "@pulsar/storemanager";
+export * as EventBus from "@vault/eventbus";
+export * as StateManager from "@vault/statemanager";

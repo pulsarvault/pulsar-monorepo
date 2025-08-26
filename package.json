@@ -2,18 +2,20 @@
   "name": "pulsar-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "Pulsar Monorepo: Open-source libraries for Event-Bus, State-Management, Routing, Http-Client, Proxy and Signal Reactivity, Virtual-DOM, and Rollup-Bundler in TypeScript.",
+  "description": "Pulsar Monorepo: Open-source libraries for Event-Bus, State-Management, Proxy-Reactivity, Routing, Http-Client, SWR-Caching, Validation etc. in TypeScript.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pnpm -r build"
+    "build": "pnpm -r build",
+    "clean": "pnpm -r clean",
+    "dev": "pnpm -r --parallel dev"
   },
   "keywords": [],
   "author": "Rohit Chauhan",
   "license": "ISC",
   "packageManager": "pnpm@10.15.0",
   "devDependencies": {
-    "tsup": "^8.5.0",
+    "tsdown": "^0.14.2",
     "typescript": "^5.9.2"
   }
 }

@@ -4,12 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "outDir": "dist",
-    "lib": ["ES2022", "DOM"]
+    "declaration": false,           // tsdown generates .d.ts
+    "emitDeclarationOnly": false,
+    "skipLibCheck": true
   }
 }
-
