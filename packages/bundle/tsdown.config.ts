@@ -4,7 +4,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: ["src/index.ts"],
   format: ["iife"],
-  globalName: "Vault",      // window.Vault
+  globalName: "vault",      // window.vault
   platform: "browser",
   outDir: "../../release",
   minify: true,

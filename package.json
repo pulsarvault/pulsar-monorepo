@@ -1,8 +1,8 @@
 {
-  "name": "pulsar-monorepo",
+  "name": "typescript-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "Pulsar Monorepo: Open-source libraries for Event-Bus, State-Management, Proxy-Reactivity, Routing, Http-Client, SWR-Caching, Validation etc. in TypeScript.",
+  "description": "Rohit Chauhan: Open-Source Libraries for Event-Bus, Store-State-Management, Proxy-Reactivity, Routing, Http-Client, SWR-Caching, Validation, Signal-State in TypeScript.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
